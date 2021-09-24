@@ -1,0 +1,29 @@
+{% load static %}
+
+<!DOCTYPE html>
+<head>
+    
+    <link rel="icon" type="image/png" href="{% static '/todo/todo_icon.png' %}" style="width:max-content;">
+    <title>MRS</title>
+</head>
+
+<body>
+    <a class="navbar-brand" href="{% url 'home' %}">
+        <img src="{% static 'todo/todo_icon.png' %}" width="30" height="30" class="d-inline-block align-top" alt=""> <span> MRS</span>
+    </a>
+    {%if user.is_authenticated %}
+    Hi {{user.username}}
+    <form action="{% url 'logoutuser' %}" method="POST" class="form-inline my-2 my-lg-0">
+        {% csrf_token %}
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Logout</button>
+    </form>
+    {% else %}
+    <a class="nav-link" href="{% url 'signupuser' %}">Signup</a>
+    <a class="nav-link" href="{% url 'loginuser' %}">Login</a>
+    {% endif %} 
+
+    {% block content %}
+
+    {% endblock %}
+</body>
+</html>
