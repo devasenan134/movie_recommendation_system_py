@@ -3,4 +3,16 @@
 
 {% block content %}
 <p>This is home page.</p>
+
+
+<h3>Recent Releases</h3>
+{% for i in movies %}
+<p>
+    <a href="{% url 'watch_movie' i.id %}">{{i.title}}</a>
+</p>
+{% endfor %}
+
+<h3>Most Popular</h3>
+dsfdsf..
+
 {% endblock %}

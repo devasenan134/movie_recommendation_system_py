@@ -1,0 +1,54 @@
+{% extends "mrs/base.html" %}
+
+{% block content %}
+
+<p>Title: {{movie.title}}</p>
+<p>Movie Id: {{movie.id}}</p>
+<p>Year Released: {{movie.year}}</p>
+<p>Language: {{movie.language}}</p>
+<p>Genre: 
+{% for j in movie.genres.all %}
+{{j}},
+{% endfor %}
+</p>
+<p>Runtime: {{movie.runtime}}</p>
+<p>Average Rating: {{ movie.avg_rate }}</p>
+<p>Total votes: {{movie.no_votes}}</p>
+
+{% if user.is_authenticated %}
+    {% if rating == None %}
+        <p>Give your rating</p>
+        <form action = "{% url 'watch_movie' movie.id %}" method = "POST">
+            {% csrf_token %}
+            <label>Rate: </label>
+            <select name="rate" id="rate">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <input type="submit" value="👍">
+        </form>
+    {% else %}
+        <h4>You rated: {{rating}}/5</h4>
+    {% endif %}
+{% else %}
+    <p>Give your rating</p>
+    <form action = "{% url 'watch_movie' movie.id %}" method = "POST">
+        {% csrf_token %}
+        <label>Rate: </label>
+        <select name="rate" id="rate">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+        <input type="submit" value="👍">
+    </form>
+    {% if error %}
+    <a href="{% url 'loginuser' %}"><label>{{error}}</label></a>
+    {% endif %}
+{% endif %}
+{% endblock %}

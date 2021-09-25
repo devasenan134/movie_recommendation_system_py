@@ -5,11 +5,16 @@ from django.contrib.auth import login, logout, authenticate
 
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-
 from django.db import IntegrityError
 
+from .models import Movie, Genre, Rating
+
 def home(request):
-    return render(request, 'mrs/home.html', {})
+    movies = Movie.objects.all()
+    genres = Genre.objects.all()
+    return render(request, 'mrs/home.html', {
+        "movies": movies,
+        "genres": genres})
 
 @login_required
 def logoutuser(request):
@@ -58,3 +63,40 @@ def loginuser(request):
             else:
                 login(request, user)
                 return redirect('home')
+            
+            
+def watch_movie(request, movie_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    rate = None
+    try:
+        rating = Rating.objects.get(movie_id = movie_pk, user_id = request.user)
+        rate = rating.rate
+    except:
+        rate = None
+        
+    if request.method == 'GET':
+        return render(request, 'mrs/watch_movie.html', {
+            "movie": movie,
+            "rating": rate
+        })
+    else:
+        if request.user.is_authenticated:
+            rate = request.POST.get('rate')
+            rating = Rating(movie_id = movie, user_id = request.user, rate = rate)
+            rating.save()
+            
+            tot = movie.avg_rate*movie.no_votes
+            movie.no_votes += 1
+            movie.avg_rate = (tot + int(rate))//movie.no_votes
+            movie.save()
+            
+            return render(request, 'mrs/watch_movie.html', {
+                "movie": movie,
+                "rating": rate
+            })
+        else:
+            return render(request, 'mrs/watch_movie.html', {
+                "movie": movie,
+                "rating": rate,
+                "error": "Login Required!"
+            })
