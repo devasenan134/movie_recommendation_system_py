@@ -44,8 +44,6 @@ def signupuser(request) :
                 'form': UserCreationForm(), 'error': 'Passwords did not match'
             })
 
-
-
 def loginuser(request):
     if request.method == 'GET':
         return render(request, 'mrs/loginuser.html')
@@ -62,8 +60,7 @@ def loginuser(request):
                 })
             else:
                 login(request, user)
-                return redirect('home')
-            
+                return redirect('home')  
             
 def watch_movie(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
@@ -100,3 +97,6 @@ def watch_movie(request, movie_pk):
                 "rating": rate,
                 "error": "Login Required!"
             })
+            
+def suggestions():
+    pass
