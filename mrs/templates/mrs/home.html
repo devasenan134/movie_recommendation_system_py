@@ -6,13 +6,32 @@
 
 
 <h3>Recent Releases</h3>
-{% for i in movies %}
-<p>
-    <a href="{% url 'watch_movie' i.id %}">{{i.title}}</a>
-</p>
+{% for i in recent %}
+<label>
+    <a href="{% url 'watch_movie' i.id %}">
+        <img src="{{i.img_url}}" alt="{{i.title}}" width="200" height="250">
+    </a>
+</label>
 {% endfor %}
 
 <h3>Most Popular</h3>
-dsfdsf..
+{% for j in popular %}
+<label>
+    <a href="{% url 'watch_movie' j.id %}">
+        <img src="{{j.img_url}}" alt="{{j.title}}" width="200" height="250">
+    </a>
+</label>
+{% endfor %}
 
-{% endblock %}
+{% if based_ratings != None %}
+<h3>Based on your Ratings</h3>
+{% for k in based_ratings %}
+<label>
+    <a href="{% url 'watch_movie' k.id %}">
+        <img src="{{k.img_url}}" alt="{{k.title}}" width="200" height="250">
+    </a>
+</label>
+{% endfor %}
+{% endif %}
+
+{% endblock %} 

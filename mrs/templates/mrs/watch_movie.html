@@ -1,10 +1,10 @@
 {% extends "mrs/base.html" %}
 
 {% block content %}
-
+<img src="{{movie.img_url}}" width="450" height="500">
 <p>Title: {{movie.title}}</p>
 <p>Movie Id: {{movie.id}}</p>
-<p>Year Released: {{movie.year}}</p>
+<p>Released on: {{month}} {{movie.year}}</p>
 <p>Language: {{movie.language}}</p>
 <p>Genre: 
 {% for j in movie.genres.all %}

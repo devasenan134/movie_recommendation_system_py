@@ -9,7 +9,7 @@
 
 <body>
     <a class="navbar-brand" href="{% url 'home' %}">
-        <img src="{% static 'todo/todo_icon.png' %}" width="30" height="30" class="d-inline-block align-top" alt=""> <span> MRS</span>
+        <img src="{% static 'mrs/mrs_logo.png' %}" width=30 height=30 alt="MRS"> <span>MRS</span>
     </a>
     {%if user.is_authenticated %}
     Hi {{user.username}}
