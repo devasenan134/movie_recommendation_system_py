@@ -1,0 +1,14 @@
+{% extends "mrs/base.html" %}
+
+{% block content %}
+{{no_movies}}
+{% for y,m in movies_by_year.items %}
+    <h3>{{y}}</h3>
+    {% for i in m %}
+        <a href="{% url 'watch_movie' i.id %}">
+            <img src="{{i.img_url}}" alt="{{i.title}}" width="200" height="250">
+        </a>
+    {% endfor %}
+{% endfor %}
+
+{% endblock %}

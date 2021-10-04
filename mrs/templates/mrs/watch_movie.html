@@ -14,6 +14,7 @@
 <p>Runtime: {{movie.runtime}}</p>
 <p>Average Rating: {{ movie.avg_rate }}</p>
 <p>Total votes: {{movie.no_votes}}</p>
+<a href="{{ movie.movie_url }}"><p>Watch Now</p></a>
 
 {% if user.is_authenticated %}
     {% if rating == None %}
@@ -51,4 +52,15 @@
     <a href="{% url 'loginuser' %}"><label>{{error}}</label></a>
     {% endif %}
 {% endif %}
+
+<br>
+<h3>Similar Movies</h3>
+{% for i in similar %}
+    <label>
+        <a href="{% url 'watch_movie' i.id %}">
+            <img src="{{i.img_url}}" alt="{{i.title}}" width="200" height="250">
+        </a>
+    </label>
+{% endfor %}
+
 {% endblock %}

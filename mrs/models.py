@@ -30,16 +30,17 @@ class Movie(models.Model):
     )
     mth = models.IntegerField(choices=month_choices, blank=False)
     runtime = models.PositiveIntegerField(blank=False)
-    avg_rate = models.IntegerField(blank=True, default=0)
+    avg_rate = models.FloatField(blank=True, default=0)
     no_votes = models.PositiveIntegerField(blank=True, default=0)
     genres = models.ManyToManyField(Genre, blank=True, related_name="has_movies")
     img_url  = models.URLField(blank=True)
+    movie_url = models.URLField(blank=True)
     
     def __str__(self):
         str = f"{self.title} - {self.year}"
         return str
     
 class Rating(models.Model):
-    movie = models.ForeignKey(Movie, related_name="movie", on_delete=CASCADE)
-    user = models.ForeignKey(User, related_name="user", on_delete=CASCADE)
+    movie = models.ForeignKey(Movie, related_name="movie_id", on_delete=CASCADE)
+    user = models.ForeignKey(User, related_name="user_id", on_delete=CASCADE)
     rate = models.IntegerField(blank=False)

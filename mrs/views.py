@@ -8,55 +8,54 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 
 from .models import Movie, Genre, Rating
-from django.db import connection
-from collections import namedtuple
-
-
-
-def namedtuplefetchall(cursor):
-    desc = cursor.description
-    nt_result = namedtuple('Result', [col[0] for col in desc])
-    return [nt_result(*row) for row in cursor.fetchall()]
-
-
+from .utils import *
+        
+        
 def home(request):
-    cursor = connection.cursor()
     recent = Movie.objects.raw("select * from mrs_movie order by year desc, mth limit 6") 
     popular = Movie.objects.raw("select * from mrs_movie order by avg_rate desc limit 6")
-    based_rating = []
-    # popular_genres = set()
-    # for i in popular:
-    #     popular_genres.add(i.genres.all())
-    # print(popular_genres)
     
-    if request.user.is_authenticated:
-        fav_genres = set()
-        fav_movies = set()
+    
+    # to list movies like the 1st movie in the most popular list
+    top_pick = set()
+    top_pick.add(popular[0])
+    like_top_pick = get_similar_movies(popular[0])
+    
+    # dictionary of picked genres and movies based on popular movies
+    picked_genres = popular_genres(popular)
+    # print("dict", picked_genres)
+    
+    if request.user.is_authenticated:    
+        # to list fav genres of user
         rated_movies = Movie.objects.raw(f"select * from mrs_movie m where id in (select movie_id from mrs_rating r where r.user_id ={request.user.id})")
-        for i in Movie.objects.raw(f"select * from mrs_movie m where id in (select movie_id from mrs_rating r where r.user_id ={request.user.id} and r.rate>=3)"):
-            fav_movies.add(i)
-        for j in fav_movies:
-            for k in j.genres.all():
-                fav_genres.add(k.id)
-        fav_genres = tuple(fav_genres)
-        for i in fav_genres:
-            movies_in_genre = Genre.objects.get(id=i)
-            based_rating.extend(movies_in_genre.has_movies.all())
-        based_rating = set(based_rating).difference(rated_movies)
-        if len(based_rating) == 0:
+        
+        # to list movies based on user rated movies where user rating is > 3
+        based_rating = get_movies_based_rating(request, rated_movies)
+        if len(rated_movies) == 0:
             based_rating = None
-        print(based_rating)
-        print(fav_movies)
+            rated_movies = None
+        
+        # print(based_rating)
+        # print(fav_movies)
+        
         return render(request, 'mrs/home.html', {
             "recent": recent,
             "popular": popular,
-            "based_ratings": based_rating
+            "top_pick": popular[0],
+            "like_top_pick": like_top_pick,
+            "picked_genres": picked_genres,
+            
+            "based_ratings": based_rating,
+            "watched": rated_movies,
             })
     else:
         
         return render(request, 'mrs/home.html', {
             "recent": recent,
             "popular": popular,
+            "top_pick": popular[0],
+            "like_top_pick": like_top_pick,
+            "picked_genres": picked_genres,
             })
 
 
@@ -110,48 +109,67 @@ def loginuser(request):
 
             
 def watch_movie(request, movie_pk):
-    movie = get_object_or_404(Movie, pk=movie_pk)
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    tot_rate = 0
-    movie.no_votes = len(Rating.objects.raw(f"select * from mrs_rating where movie_id={movie.id}"))
-    for i in  Rating.objects.raw(f"select * from mrs_rating where movie_id={movie.id}"):
-        tot_rate += i.rate
-    try:
-        movie.avg_rate = tot_rate/movie.no_votes
-    except:
-        movie.avg_rate = 0
-    movie.save()
-        
-    try:
-        rating = Rating.objects.get(movie = movie, user = request.user)
-        rate = rating.rate
-    except:
-        rate = None
-    print(rate)
+    
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    similar_movies = get_similar_movies(movie)
+    
     if request.method == 'GET':
+        
+        try:
+            rating = Rating.objects.get(movie = movie, user = request.user)
+            rate = rating.rate
+        except:
+            rate = None
+            
+        # print(rate, request.user)   
         return render(request, 'mrs/watch_movie.html', {
             "movie": movie,
             "rating": rate,
             "month": months[movie.mth-1],
+            "similar": similar_movies,
         })
     else:
+        rate = None
         if request.user.is_authenticated:
             rate = request.POST.get('rate')
+            rate = int(rate)
+            
             rating = Rating(movie = movie, user = request.user, rate = rate)
             rating.save()
             
-            tot = 0
-            movie.no_votes = len(Rating.objects.raw(f"select * from mrs_rating where movie_id={movie.id}"))
-            for i in  Rating.objects.raw(f"select * from mrs_rating where movie_id={movie.id}"):
-                tot += i.rate
-            movie.avg_rate = tot_rate/movie.no_votes
+            # movie.no_votes += len(Rating.objects.raw(f"select * from mrs_rating where movie_id={movie.id}"))
+            # for i in  Rating.objects.raw(f"select * from mrs_rating where movie_id={movie.id}"):
+            #     tot += i.rate
+            # movie.avg_rate += tot_rate/movie.no_votes
+            
+            movie.no_votes += 1
+            movie.avg_rate = round((movie.avg_rate + rate)/2, 2)
             movie.save()
-            print(rate, rating.user.id)
+            # print(rate, rating.user)
             return redirect("home")
         else:
             return render(request, 'mrs/watch_movie.html', {
                 "movie": movie,
                 "rating": rate,
                 "month": months[movie.mth-1],
+                "similar": similar_movies,
                 "error": "Login Required!"
             })
+
+
+def all_movies(request):
+    all_movies = Movie.objects.raw("select * from mrs_movie order by year desc, mth desc") 
+    movies_by_year = {}
+    no_movies = len(all_movies)
+    for i in all_movies:
+        if i.year not in movies_by_year:
+            movies_by_year[i.year] = set()
+            movies_by_year[i.year].add(i)
+        else:
+            movies_by_year[i.year].add(i)
+            
+    return render(request, "mrs/all_movies.html", {
+        "movies_by_year": movies_by_year,
+        "no_movies": no_movies
+    })
