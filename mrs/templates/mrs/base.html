@@ -5,16 +5,76 @@
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
 
     <title>MRS</title>
-    <link rel="icon" type="image/png" href="{% static 'mrs/logo-removebg-preview.png' %}" style="width:max-content;">
+    <link rel="icon" type="image/png" href="{% static 'mrs/logo-removebg-preview.png' %}" style="width:max-content;"> 
+
+    <link rel="stylesheet" type="text/css" href="{% static 'mrs/style.css' %}">
+    
+    <style>
+
+    .scrolling-wrapper-flexbox {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .card {
+      padding: 10px;
+      flex: 0 0 auto;
+      background-color: black;
+    }
+
+    @media (min-width: 768px) {
+      .imgCard{
+          width: 200px;
+          height: 250px;
+      }
+      .movieImg{
+        width: 50%;
+        height: 100%;
+      }
+      .title{
+        font-size: 65px;
+        font-weight: 10;
+        margin: 10px;
+      }
+
+    }
+
+    @media (max-width: 768px) {
+      .imgCard {
+        width: 100px;
+        height: 150px;
+      } 
+      .movieImg{
+        width: 100%;
+        height: 100%;
+      }
+      .cardsTitle{
+          font-size: 15px;
+      }
+      .title{
+        font-size: 45px;
+        font-weight: 10;
+        margin: 10px;
+      }
+    }
+
+    </style>
+
+    {% block style %}
+    {% endblock %}
+
   </head>
-  <body>    
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  
+  <body style="background-color: black; color: white;"> 
+
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'mrs/logo-removebg-preview.png' %}" width=50 height=50 alt="MRS" class="d-inline-block align-centre"> <span>MRS</span>
         </a>
@@ -25,19 +85,16 @@
       
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'all_movies' %}">All Movies</a>
             </li>
-            {%if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Hi {{user.username}}</a>
-                  </li>
+
+            {% if user.is_authenticated %}
+          </ul>
+                <h6 class="mr-sm-2">Hi {{user.username}}!</h6>
                 <form action="{% url 'logoutuser' %}" method="POST" class="form-inline my-2 my-lg-0">
                     {% csrf_token %}
-                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Logout</button>
+                      <button class="btn btn-outline-dark btn-sm" type="submit">Logout🏃</button>
                 </form>
             {% else %}
                 <li class="nav-item">
@@ -46,10 +103,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'loginuser' %}">Login</a>
                 </li>
+              </ul>
             {% endif %} 
-          </ul>
         </div>
       </nav>
+
+    {% block imgHead %}
+
+    {% endblock %}
 
     <div class="container" style="margin-bottom: 100px; padding: 20px;">
       {% block content %}
@@ -57,6 +118,7 @@
       {% endblock %}
     </div>
 
+ 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
   </body>

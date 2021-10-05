@@ -1,67 +1,105 @@
-{% extends 'mrs/base.html' %}
+{% extends "mrs/base.html" %}
 
+{% block style %}
+<style>
+  
+</style>
+{% endblock %}
+
+
+{% block imgHead %}
+
+{% endblock %}
 
 {% block content %}
 
-<h3>Recent Releases</h3>
-{% for i in recent %}
-    <label>
-        <a href="{% url 'watch_movie' i.id %}">
-            <img src="{{i.img_url}}" alt="{{i.title}}" width="200" height="250">
-        </a>
-    </label>
-{% endfor %}
+<div style="padding:20px">
+    <h4 class="cardsTitle">Recent Releases</h4>
+    <div class="scrolling-wrapper-flexbox">
+        {% for i in recent %}
+        <div class="card">
+            <a href="{% url 'watch_movie' i.id %}">
+                <img src="{{i.img_url}}" class="rounded imgCard" alt="{{i.title}}">
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+ 
 
-<h3>Most Popular</h3>
-{% for j in popular %}
-    <label>
-        <a href="{% url 'watch_movie' j.id %}">
-            <img src="{{j.img_url}}" alt="{{j.title}}" width="200" height="250">
-        </a>
-    </label>
-{% endfor %}
+<div style="padding:20px">
+    <h4 class="cardsTitle">Most Popular</h4>
+    <div class="scrolling-wrapper-flexbox">
+        {% for j in popular %}
+        <div class="card">
+            <a href="{% url 'watch_movie' j.id %}">
+                <img src="{{j.img_url}}" class="rounded imgCard" alt="{{j.title}}">
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 
-<h3>Movies like {{top_pick}}</h3>
-{% for i in like_top_pick %}
-    <label>
-        <a href="{% url 'watch_movie' i.id %}">
-            <img src="{{i.img_url}}" alt="{{i.title}}" width="200" height="250">
-        </a>
-    </label>
-{% endfor %}
+
+<div style="padding:20px">
+    <h4 class="cardsTitle">Movies like {{top_pick}}</h4>
+    <div class="scrolling-wrapper-flexbox">
+        {% for i in like_top_pick %}
+        <div class="card">
+            <a href="{% url 'watch_movie' i.id %}">
+                <img src="{{i.img_url}}" class="rounded imgCard" alt="{{i.title}}">
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
 
 {% if based_ratings != None %}
-    <h3>Based on your Ratings</h3>
-    {% for k in based_ratings %}
-        <label>
+<div style="padding:20px">
+    <h4 class="cardsTitle">Based on your Ratings</h4>
+    <div class="scrolling-wrapper-flexbox">
+        {% for k in based_ratings %}
+        <div class="card">
             <a href="{% url 'watch_movie' k.id %}">
-                <img src="{{k.img_url}}" alt="{{k.title}}" width="200" height="250">
+                <img src="{{k.img_url}}" class="rounded imgCard" alt="{{k.title}}">
             </a>
-        </label>
-    {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endif %}
 
 
 {% for k,v in picked_genres.items %}
-    <h3>{{k}}</h3>
-    {% for i in v %}
-        <label>
-            <a href="{% url 'watch_movie' i.id %}">
-                <img src="{{i.img_url}}" alt="{{i.title}}" width="200" height="250">
-            </a>
-        </label>
-    {% endfor %}
+    <div style="padding:20px">
+        <h4 class="cardsTitle">{{k}}</h4>
+        <div class="scrolling-wrapper-flexbox">
+            {% for i in v %}
+            <div class="card">
+                    <a href="{% url 'watch_movie' i.id %}">
+                        <img src="{{i.img_url}}" class="rounded imgCard" alt="{{i.title}}">
+                    </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endfor %}
 
+
 {% if watched != None %}
-    <h3>Movies you have watched</h3>
-    {% for k in watched %}
-        <label>
-            <a href="{% url 'watch_movie' k.id %}">
-                <img src="{{k.img_url}}" alt="{{k.title}}" width="200" height="250">
-            </a>
-        </label>
-    {% endfor %}
+<div style="padding:20px">
+    <h4 class="cardsTitle">Movies you have watched</h4>
+    <div class="scrolling-wrapper-flexbox">
+        {% for k in watched %}
+        <div class="card">
+                <a href="{% url 'watch_movie' k.id %}">
+                    <img src="{{k.img_url}}" class="rounded imgCard" alt="{{k.title}}">
+                </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endif %}
 
 {% endblock %} 

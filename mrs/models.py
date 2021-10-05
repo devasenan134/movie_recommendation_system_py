@@ -35,6 +35,7 @@ class Movie(models.Model):
     genres = models.ManyToManyField(Genre, blank=True, related_name="has_movies")
     img_url  = models.URLField(blank=True)
     movie_url = models.URLField(blank=True)
+    description = models.TextField(blank=True)
     
     def __str__(self):
         str = f"{self.title} - {self.year}"

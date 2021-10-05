@@ -27,7 +27,7 @@ def home(request):
     
     if request.user.is_authenticated:    
         # to list fav genres of user
-        rated_movies = Movie.objects.raw(f"select * from mrs_movie m where id in (select movie_id from mrs_rating r where r.user_id ={request.user.id})")
+        rated_movies = Movie.objects.raw(f"select * from mrs_movie m where id in (select movie_id from mrs_rating r where r.user_id ={request.user.id} order by r.rate desc)")
         
         # to list movies based on user rated movies where user rating is > 3
         based_rating = get_movies_based_rating(request, rated_movies)
