@@ -12,7 +12,7 @@ from .utils import *
         
         
 def home(request):
-    recent = Movie.objects.raw("select * from mrs_movie order by year desc, mth limit 6") 
+    recent = Movie.objects.raw("select * from mrs_movie order by year desc, mth desc limit 6") 
     popular = Movie.objects.raw("select * from mrs_movie order by avg_rate desc limit 6")
     
     
