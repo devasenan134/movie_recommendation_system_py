@@ -24,9 +24,22 @@
       -webkit-overflow-scrolling: touch;
     }
     .card {
-      padding: 10px;
+      padding: 10px 5px;
       flex: 0 0 auto;
-      background-color: black;
+      background-color: rgba(0, 0, 0, 0.25);
+      margin: 0;
+    }
+
+    body, html{
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      /* Center and scale the image nicely */
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-image: url("{% static 'mrs/bg_img.jpg' %}");
+      background-size: cover;
     }
 
     @media (min-width: 768px) {
@@ -43,13 +56,12 @@
         font-weight: 10;
         margin: 10px;
       }
-
     }
 
     @media (max-width: 768px) {
       .imgCard {
         width: 100px;
-        height: 150px;
+        height: 125px;
       } 
       .movieImg{
         width: 100%;
@@ -63,6 +75,9 @@
         font-weight: 10;
         margin: 10px;
       }
+      .bg-text{
+        font-size: 20px;
+      }
     }
 
     </style>
@@ -73,10 +88,9 @@
   </head>
   
   <body style="background-color: black; color: white;"> 
-
-    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" >
         <a class="navbar-brand" href="{% url 'home' %}">
-            <img src="{% static 'mrs/logo-removebg-preview.png' %}" width=50 height=50 alt="MRS" class="d-inline-block align-centre"> <span>MRS</span>
+            <img src="{% static 'mrs/logo-removebg-preview.png' %}" width=35 height=35 alt="MRS" class="d-inline-block align-centre"> <span>MRS</span>
         </a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -108,16 +122,15 @@
         </div>
       </nav>
 
-    {% block imgHead %}
+    {% block image %}
 
     {% endblock %}
 
-    <div class="container" style="margin-bottom: 100px; padding: 20px;">
+    <div class="container" style="padding-bottom: 250px; padding-top: 100px;">
       {% block content %}
     
       {% endblock %}
     </div>
-
  
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
